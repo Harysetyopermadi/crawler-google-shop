@@ -13,7 +13,7 @@ import pandas as pd
 
 def opened_link_chrome(url_search):
     options = webdriver.ChromeOptions()
-    #options.add_argument('--headless')
+    options.add_argument('--headless')
     options.add_argument('--disable-blink-features=AutomationControlled') 
     
     #options.add_argument("start-maximized")
@@ -26,7 +26,7 @@ def opened_link_chrome(url_search):
     driver = webdriver.Chrome(options=options)
     driver.get(url_search)
     driver.maximize_window()
-    time.sleep(40)
+    #time.sleep(40)
     page=1
     df3=pd.DataFrame()
     while True:
@@ -53,7 +53,7 @@ def opened_link_chrome(url_search):
                     detailsingkat="Tidak Ada Detail Singkat"
                 
                 try:
-                    harga=area.find('span', class_="QIrs8").get_text()
+                    harga=area.find('span', class_="a8Pemb OFFNJ").get_text()
                     harga=harga.replace('|','')
                     
                 except:
@@ -72,6 +72,13 @@ def opened_link_chrome(url_search):
                     
                 except:
                     Pengiriman="Tidak Ada Element Pengiriman"
+                    
+                try:
+                    review=area.find('span', class_="QIrs8").get_text()
+                    review=review.replace('|','')
+                    
+                except:
+                    review="Tidak Ada Review"
                 # print(Judul)
                 # print(Pengiriman) 
                 # print(harga)
@@ -81,7 +88,8 @@ def opened_link_chrome(url_search):
                                  "Pengiriman":[Pengiriman],
                                  "Harga":[harga],
                                  "Link":[link],
-                                 "Detail_Singkat":[detailsingkat]                        
+                                 "Detail_Singkat":[detailsingkat],
+                                 "Review":[review]                       
                                  })
                 df2=df2.append(df1)
             df3=df3.append(df2)
@@ -99,6 +107,7 @@ def opened_link_chrome(url_search):
             
     df3=df3.replace('[.]','',regex=True)
     df3=df3.replace(',00','',regex=True)
+    df3.loc[df3['Review'].str.contains('Rp'), 'Review'] = 'Tidak Ada Review'
     print(df3)
     df3.to_excel("out.xlsx")
 
