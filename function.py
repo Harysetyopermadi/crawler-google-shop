@@ -13,7 +13,7 @@ import pandas as pd
 
 def opened_link_chrome(url_search):
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    #options.add_argument('--headless')
     options.add_argument('--disable-blink-features=AutomationControlled') 
     
     #options.add_argument("start-maximized")
@@ -101,9 +101,14 @@ def opened_link_chrome(url_search):
             page=page+1
             
         except:
-            print(str(page))
-            print("element next tidak ada")
-            break
+            try:
+                driver.find_element(By.ID, 'captcha-form')
+                print("Ada Capcha")
+                time.sleep(5)
+            except:
+                print(str(page))
+                print("element next tidak ada")
+                break
             
     df3=df3.replace('[.]','',regex=True)
     df3=df3.replace(',00','',regex=True)
